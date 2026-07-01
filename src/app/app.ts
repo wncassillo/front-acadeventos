@@ -5,9 +5,9 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   imports: [RouterOutlet],
   template: `
-  <router-outlet />
+    <router-outlet></router-outlet>
   `
 })
 export class App {
-  protected readonly title = signal('AcadEvenetos-front');
+  protected readonly title = signal('AcadEventos-front');
 }

@@ -1,1 +1,32 @@
-<p>pg-login works!</p>
+<div class="center-page">
+  <div class="card form-card text-center">
+    <h1>AcadEventos</h1>
+
+    <p class="subtitle">
+      Sistema de gerenciamento de eventos acadêmicos
+    </p>
+
+    <label for="nome">Nome do usuário</label>
+
+    <input
+      id="nome"
+      type="text"
+      [(ngModel)]="nome"
+      placeholder="Digite seu nome"
+    >
+
+    <div class="actions">
+      <button type="button" (click)="entrarComoParticipante()">
+        Entrar como Participante
+      </button>
+
+      <button type="button" class="secondary" (click)="entrarComoOrganizador()">
+        Entrar como Organizador
+      </button>
+    </div>
+
+    <p class="info">
+      Login demonstrativo, sem autenticação real, conforme orientação da atividade.
+    </p>
+  </div>
+</div>
