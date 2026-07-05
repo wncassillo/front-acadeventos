@@ -14,8 +14,12 @@
       [(ngModel)]="nome"
       placeholder="Digite seu nome"
     >
+    
+    <p class="info">
+    Login demonstrativo, sem autenticação real, conforme orientação da atividade.
+    </p>
 
-    <div class="actions">
+    <div class="login-actions">
       <button type="button" (click)="entrarComoParticipante()">
         Entrar como Participante
       </button>
@@ -25,8 +29,10 @@
       </button>
     </div>
 
-    <p class="info">
-      Login demonstrativo, sem autenticação real, conforme orientação da atividade.
-    </p>
+    <div class="info-link">
+      <p>Não tem uma conta?</p>
+      <a (click)="irParaCadastro()">Cadastre-se aqui</a>
+    </div>
+
   </div>
 </div>

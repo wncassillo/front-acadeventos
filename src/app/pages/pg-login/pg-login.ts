@@ -30,4 +30,8 @@ export class PgLogin {
 
     this.router.navigate(['/organizer-homepage']);
   }
+
+  irParaCadastro() {
+    this.router.navigate(['/register'])
+  }
 }

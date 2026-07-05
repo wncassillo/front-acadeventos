@@ -66,7 +66,7 @@ select {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 15px;
-  margin-bottom: 14px;
+  //margin-bottom: 14px;
 }
 
 input:focus,
@@ -120,6 +120,33 @@ button:disabled {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.login-actions{ //actions usados no card de login, alterado rpa centralizar os botões na tela
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  flex-direction: column;
+}
+
+.info-link{ //aviso pra criar conta na pagina de login
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #555;
+  font-size: 15px;
+  
+  a{
+    text-decoration: underline;
+  }
+  a:hover{
+    text-decoration: underline;
+    color: #1976d2;
+  }
 }
 
 .text-center {
