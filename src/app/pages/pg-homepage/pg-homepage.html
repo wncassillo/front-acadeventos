@@ -1,243 +1,312 @@
-<div class="page">
-  <div class="topbar">
+<div style="padding: 24px; font-family: Arial, sans-serif; background: #f4f7fb; min-height: 100vh; color: #222;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
     <div>
-      <h1>
+      <h1 style="margin: 0 0 8px 0;">
         {{ ehOrganizador ? 'Área do Organizador' : 'Eventos Disponíveis' }}
       </h1>
 
-      <p class="subtitle">
+      <p style="margin: 0; color: #555;">
         Usuário: <strong>{{ usuarioNome }}</strong> |
         Perfil: <strong>{{ ehOrganizador ? 'Organizador' : 'Participante' }}</strong>
       </p>
     </div>
 
-    <div class="actions">
-      @if (!ehOrganizador) {
-        <button type="button" class="secondary" (click)="irParaMinhasInscricoes()">
-          Minhas Inscrições
-        </button>
-      }
+    <div style="display: flex; gap: 8px;">
+      <button
+        *ngIf="!ehOrganizador"
+        type="button"
+        (click)="irParaMinhasInscricoes()"
+        style="padding: 10px 14px; border: none; border-radius: 6px; background: #6c757d; color: white; cursor: pointer;"
+      >
+        Minhas Inscrições
+      </button>
 
-      <button type="button" class="danger" (click)="sair()">
+      <button
+        type="button"
+        (click)="sair()"
+        style="padding: 10px 14px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer;"
+      >
         Sair
       </button>
     </div>
   </div>
 
-  @if (erro) {
-    <p class="error">{{ erro }}</p>
-  }
+  <p *ngIf="erro" style="padding: 12px; background: #ffe5e5; color: #a10000; border-radius: 6px;">
+    {{ erro }}
+  </p>
 
-  @if (sucesso) {
-    <p class="success">{{ sucesso }}</p>
-  }
+  <p *ngIf="sucesso" style="padding: 12px; background: #e6ffed; color: #0f6b2f; border-radius: 6px;">
+    {{ sucesso }}
+  </p>
 
-  <div class="card">
-    <h2>Filtros</h2>
+  <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+    <h2 style="margin-top: 0;">Filtros</h2>
 
-    <div class="filters">
+    <div style="display: grid; grid-template-columns: 1fr 220px 220px auto auto; gap: 10px; align-items: center;">
       <input
         type="text"
         [(ngModel)]="texto"
         placeholder="Pesquisar por título, descrição ou local"
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
       >
 
-      <select [(ngModel)]="categoria">
+      <select
+        [(ngModel)]="categoria"
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
         <option value="">Todas as categorias</option>
         <option value="Tecnologia">Tecnologia</option>
         <option value="Banco de Dados">Banco de Dados</option>
         <option value="Carreira">Carreira</option>
       </select>
 
-      <select [(ngModel)]="ordenar">
+      <select
+        [(ngModel)]="ordenar"
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
+        <option value="">Ordenar por data</option>
         <option value="asc">Data mais próxima</option>
         <option value="desc">Data mais distante</option>
       </select>
 
-      <div class="actions">
-        <button type="button" (click)="carregarEventos()">
-          Buscar
+      <button
+        type="button"
+        (click)="carregarEventos()"
+        style="padding: 10px 14px; border: none; border-radius: 6px; background: #0d6efd; color: white; cursor: pointer;"
+      >
+        Buscar
+      </button>
+
+      <button
+        type="button"
+        (click)="limparFiltros()"
+        style="padding: 10px 14px; border: none; border-radius: 6px; background: #6c757d; color: white; cursor: pointer;"
+      >
+        Limpar
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="ehOrganizador" style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">Meus Eventos</h2>
+
+      <button
+        type="button"
+        (click)="abrirFormularioNovo()"
+        style="padding: 10px 14px; border: none; border-radius: 6px; background: #0d6efd; color: white; cursor: pointer;"
+      >
+        Criar Evento
+      </button>
+    </div>
+
+    <form
+      *ngIf="mostrarFormulario"
+      (ngSubmit)="salvarEvento()"
+      style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;"
+    >
+      <input
+        type="text"
+        name="titulo"
+        [(ngModel)]="eventoForm.titulo"
+        placeholder="Título do evento"
+        required
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
+
+      <input
+        type="text"
+        name="categoria"
+        [(ngModel)]="eventoForm.categoria"
+        placeholder="Categoria"
+        required
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
+
+      <input
+        type="datetime-local"
+        name="dataHora"
+        [(ngModel)]="eventoForm.dataHora"
+        required
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
+
+      <input
+        type="text"
+        name="local"
+        [(ngModel)]="eventoForm.local"
+        placeholder="Local ou link online"
+        required
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
+
+      <input
+        type="number"
+        name="vagas"
+        [(ngModel)]="eventoForm.vagas"
+        placeholder="Número de vagas"
+        min="1"
+        required
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
+
+      <input
+        type="text"
+        name="imagem"
+        [(ngModel)]="eventoForm.imagem"
+        placeholder="URL da imagem opcional"
+        style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;"
+      >
+
+      <textarea
+        name="descricao"
+        [(ngModel)]="eventoForm.descricao"
+        placeholder="Descrição do evento"
+        required
+        style="grid-column: 1 / -1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; min-height: 80px;"
+      ></textarea>
+
+      <div style="grid-column: 1 / -1; display: flex; gap: 10px;">
+        <button
+          type="submit"
+          [disabled]="salvando"
+          style="padding: 10px 14px; border: none; border-radius: 6px; background: #198754; color: white; cursor: pointer;"
+        >
+          {{ salvando ? 'Salvando...' : (editando ? 'Atualizar Evento' : 'Cadastrar Evento') }}
         </button>
 
-        <button type="button" class="secondary" (click)="limparFiltros()">
-          Limpar
+        <button
+          type="button"
+          (click)="cancelarFormulario()"
+          style="padding: 10px 14px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer;"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <p *ngIf="carregando">
+    Carregando eventos...
+  </p>
+
+  <div *ngIf="!carregando && eventos.length === 0" style="background: white; padding: 20px; border-radius: 10px;">
+    <p>Nenhum evento encontrado.</p>
+  </div>
+
+  <div *ngIf="!carregando && eventos.length > 0" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+    <div
+      *ngFor="let evento of eventos; trackBy: trackByEventoId"
+      style="background: white; border-radius: 10px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); border: 1px solid #e5e5e5;"
+    >
+      <span style="display: inline-block; padding: 5px 10px; background: #e7f1ff; color: #0d6efd; border-radius: 20px; font-size: 13px; margin-bottom: 10px;">
+        {{ evento.categoria }}
+      </span>
+
+      <h2 style="margin: 8px 0;">
+        {{ evento.titulo }}
+      </h2>
+
+      <p style="color: #444;">
+        {{ evento.descricao }}
+      </p>
+
+      <p>
+        <strong>Data:</strong>
+        {{ evento.dataHora | date:'dd/MM/yyyy HH:mm' }}
+      </p>
+
+      <p>
+        <strong>Local:</strong>
+        {{ evento.local }}
+      </p>
+
+      <p>
+        <strong>Status:</strong>
+        {{ statusEvento(evento) }}
+      </p>
+
+      <p>
+        <strong>Vagas:</strong>
+        {{ vagasDisponiveis(evento) }} disponíveis de {{ evento.vagas }}
+      </p>
+
+      <p>
+        <strong>Organizador:</strong>
+        {{ evento.organizador }}
+      </p>
+
+      <div *ngIf="ehOrganizador" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;">
+        <button
+          type="button"
+          (click)="editarEvento(evento)"
+          [disabled]="eventoFinalizado(evento)"
+          style="padding: 9px 12px; border: none; border-radius: 6px; background: #0d6efd; color: white; cursor: pointer;"
+        >
+          Editar
+        </button>
+
+        <button
+          type="button"
+          (click)="excluirEvento(evento)"
+          [disabled]="eventoFinalizado(evento)"
+          style="padding: 9px 12px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer;"
+        >
+          Excluir
+        </button>
+
+        <button
+          type="button"
+          (click)="verInscritos(evento)"
+          style="padding: 9px 12px; border: none; border-radius: 6px; background: #6c757d; color: white; cursor: pointer;"
+        >
+          Ver Inscritos
+        </button>
+      </div>
+
+      <p *ngIf="ehOrganizador && eventoFinalizado(evento)" style="color: #777; font-size: 13px;">
+        Evento finalizado não pode ser editado ou excluído.
+      </p>
+
+      <div
+        *ngIf="ehOrganizador && inscritosPorEvento[evento._id || '']"
+        style="margin-top: 12px; padding: 12px; background: #f8f9fa; border-radius: 6px;"
+      >
+        <strong>Inscritos:</strong>
+
+        <p *ngIf="inscritosPorEvento[evento._id || ''].length === 0">
+          Nenhum inscrito.
+        </p>
+
+        <ul *ngIf="inscritosPorEvento[evento._id || ''].length > 0">
+          <li *ngFor="let inscrito of inscritosPorEvento[evento._id || '']">
+            {{ inscrito }}
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="!ehOrganizador" style="margin-top: 14px;">
+        <button
+          *ngIf="estaInscrito(evento)"
+          type="button"
+          (click)="cancelarInscricao(evento)"
+          style="padding: 10px 14px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer;"
+        >
+          Cancelar Inscrição
+        </button>
+
+        <button
+          *ngIf="!estaInscrito(evento)"
+          type="button"
+          (click)="inscrever(evento)"
+          [disabled]="vagasDisponiveis(evento) === 0 || eventoFinalizado(evento)"
+          style="padding: 10px 14px; border: none; border-radius: 6px; background: #198754; color: white; cursor: pointer;"
+        >
+          <span *ngIf="eventoFinalizado(evento)">Evento finalizado</span>
+          <span *ngIf="!eventoFinalizado(evento) && vagasDisponiveis(evento) === 0">Sem vagas</span>
+          <span *ngIf="!eventoFinalizado(evento) && vagasDisponiveis(evento) > 0">Inscrever-se</span>
         </button>
       </div>
     </div>
   </div>
-
-  @if (ehOrganizador) {
-    <div class="card">
-      <div class="topbar">
-        <h2>Meus Eventos</h2>
-
-        <button type="button" (click)="abrirFormularioNovo()">
-          Criar Evento
-        </button>
-      </div>
-
-      @if (mostrarFormulario) {
-        <form (ngSubmit)="salvarEvento()" class="form-grid">
-          <input
-            type="text"
-            name="titulo"
-            [(ngModel)]="eventoForm.titulo"
-            placeholder="Título do evento"
-            required
-          >
-
-          <input
-            type="text"
-            name="categoria"
-            [(ngModel)]="eventoForm.categoria"
-            placeholder="Categoria"
-            required
-          >
-
-          <input
-            type="datetime-local"
-            name="dataHora"
-            [(ngModel)]="eventoForm.dataHora"
-            required
-          >
-
-          <input
-            type="text"
-            name="local"
-            [(ngModel)]="eventoForm.local"
-            placeholder="Local ou link online"
-            required
-          >
-
-          <input
-            type="number"
-            name="vagas"
-            [(ngModel)]="eventoForm.vagas"
-            placeholder="Número de vagas"
-            min="1"
-            required
-          >
-
-          <input
-            type="text"
-            name="imagem"
-            [(ngModel)]="eventoForm.imagem"
-            placeholder="URL da imagem opcional"
-          >
-
-          <textarea
-            name="descricao"
-            [(ngModel)]="eventoForm.descricao"
-            placeholder="Descrição do evento"
-            required
-          ></textarea>
-
-          <div class="actions">
-            <button type="submit" [disabled]="salvando">
-              {{ salvando ? 'Salvando...' : (editando ? 'Atualizar Evento' : 'Cadastrar Evento') }}
-            </button>
-
-            <button type="button" class="danger" (click)="cancelarFormulario()">
-              Cancelar
-            </button>
-          </div>
-        </form>
-      }
-    </div>
-  }
-
-  @if (carregando) {
-    <p>Carregando eventos...</p>
-  } @else {
-    @if (eventos.length === 0) {
-      <div class="card">
-        <p>Nenhum evento encontrado.</p>
-      </div>
-    } @else {
-      <div class="grid">
-        @for (evento of eventos; track evento._id) {
-          <div class="event-card">
-            <span class="badge">{{ evento.categoria }}</span>
-
-            <h2>{{ evento.titulo }}</h2>
-
-            <p>{{ evento.descricao }}</p>
-
-            <p>
-              <strong>Data:</strong>
-              {{ evento.dataHora | date:'dd/MM/yyyy HH:mm' }}
-            </p>
-
-            <p>
-              <strong>Local:</strong>
-              {{ evento.local }}
-            </p>
-
-            <p>
-              <strong>Status:</strong>
-              {{ evento.status }}
-            </p>
-
-            <p>
-              <strong>Vagas:</strong>
-              {{ evento.vagasDisponiveis }} disponíveis de {{ evento.vagas }}
-            </p>
-
-            <p>
-              <strong>Organizador:</strong>
-              {{ evento.organizador }}
-            </p>
-
-            @if (ehOrganizador) {
-              <div class="actions">
-                <button type="button" (click)="editarEvento(evento)">
-                  Editar
-                </button>
-
-                <button type="button" class="danger" (click)="excluirEvento(evento)">
-                  Excluir
-                </button>
-
-                <button type="button" class="secondary" (click)="verInscritos(evento)">
-                  Ver Inscritos
-                </button>
-              </div>
-
-              @if (inscritosPorEvento[evento._id || '']) {
-                <div class="inscritos-box">
-                  <strong>Inscritos:</strong>
-
-                  @if (inscritosPorEvento[evento._id || ''].length === 0) {
-                    <p>Nenhum inscrito.</p>
-                  } @else {
-                    <ul>
-                      @for (inscrito of inscritosPorEvento[evento._id || '']; track inscrito) {
-                        <li>{{ inscrito }}</li>
-                      }
-                    </ul>
-                  }
-                </div>
-              }
-            } @else {
-              <div class="actions">
-                @if (estaInscrito(evento)) {
-                  <button type="button" class="danger" (click)="cancelarInscricao(evento)">
-                    Cancelar Inscrição
-                  </button>
-                } @else {
-                  <button
-                    type="button"
-                    (click)="inscrever(evento)"
-                    [disabled]="evento.vagasDisponiveis === 0"
-                  >
-                    {{ evento.vagasDisponiveis === 0 ? 'Sem vagas' : 'Inscrever-se' }}
-                  </button>
-                }
-              </div>
-            }
-          </div>
-        }
-      </div>
-    }
-  }
 </div>
