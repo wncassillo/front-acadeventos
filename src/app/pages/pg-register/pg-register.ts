@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Usuario, UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-pg-register',
@@ -9,22 +10,43 @@ import { Router } from '@angular/router';
   styleUrl: './pg-register.scss',
 })
 export class PgRegister {
-   nome = '';
+  nome = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private usuarioService: UsuarioService
+  ) {}
 
   cadastrarComoParticipante() {
-    alert("PLACEHOLDER \nParticipante Criado!")
-    this.router.navigate(['/login']);
+    this.cadastrar(false);
   }
 
   cadastrarComoOrganizador() {
-    alert("PLACEHOLDER \nOrganizador Criado!")
-    this.router.navigate(['/login']);
+    this.cadastrar(true);
+  }
+
+  private cadastrar(isOrganizer: boolean) {
+    const novoUsuario: Usuario = {
+      username: this.nome,
+      isOrganizer
+    };
+
+    this.usuarioService.criarUsuario(novoUsuario).subscribe({
+      next: (usuarioCriado) => {
+        alert(`Usuário "${usuarioCriado.username}" criado com sucesso!`);
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        if (err.status === 409) {
+          alert('Já existe um usuário com esse nome.');
+        } else {
+          alert('Erro ao criar usuário: ' + err.message);
+        }
+      }
+    });
   }
 
   irParaLogin() {
-    this.router.navigate(['/login'])
+    this.router.navigate(['/login']);
   }
-
 }

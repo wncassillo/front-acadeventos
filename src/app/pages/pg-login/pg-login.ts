@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-pg-login',
@@ -11,24 +12,30 @@ import { Router } from '@angular/router';
 export class PgLogin {
   nome = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private usuarioService: UsuarioService) {}
 
-  entrarComoParticipante() {
-    const participante = this.nome.trim() || 'Victor';
+  entrar() {
+    this.usuarioService.logarUsuario(this.nome).subscribe({
+      next: (resposta) => {
+        const username = this.nome.trim() || 'Victor';
+        localStorage.setItem('usuarioNome', username);
 
-    localStorage.setItem('usuarioNome', participante);
-    localStorage.setItem('usuarioPerfil', 'participante');
-
-    this.router.navigate(['/homepage']);
-  }
-
-  entrarComoOrganizador() {
-    const organizador = this.nome.trim() || 'Fabricio';
-
-    localStorage.setItem('usuarioNome', organizador);
-    localStorage.setItem('usuarioPerfil', 'organizador');
-
-    this.router.navigate(['/organizer-homepage']);
+        if (resposta.usuario.isOrganizer) {
+          localStorage.setItem('usuarioPerfil', 'organizador');
+          this.router.navigate(['/homepage']);
+        } else {
+          localStorage.setItem('usuarioPerfil', 'participante');
+          this.router.navigate(['/homepage']);
+        }
+      },
+      error: (err) => {
+        if (err.status === 404) {
+          alert('Usuário não encontrado.');
+        } else {
+          alert('Erro ao fazer login: ' + err.message);
+        }
+      }
+    });
   }
 
   irParaCadastro() {

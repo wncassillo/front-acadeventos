@@ -11,7 +11,6 @@ export const routes: Routes = [
   { path: 'login', component: PgLogin },
   { path: 'register', component: PgRegister },
   { path: 'homepage', component: PgHomepage },
-  { path: 'organizer-homepage', component: PgHomepage },
   { path: 'my-entries', component: PgMyEntries },
 
   { path: '**', redirectTo: 'login' }
