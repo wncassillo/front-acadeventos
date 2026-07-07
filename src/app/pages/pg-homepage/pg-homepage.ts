@@ -2,6 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { EventoParticipanteCard } from '../../components/evento-participante-card/evento-participante-card';
+import { EventoOrganizadorCard } from '../../components/evento-organizador-card/evento-organizador-card';
 
 interface Evento {
   _id?: string;
@@ -22,7 +24,12 @@ interface Evento {
 @Component({
   selector: 'app-pg-homepage',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    EventoParticipanteCard,
+    EventoOrganizadorCard
+  ],
   templateUrl: './pg-homepage.html'
 })
 export class PgHomepage implements OnInit {

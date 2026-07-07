@@ -18,7 +18,7 @@
         (click)="irParaMinhasInscricoes()"
         style="padding: 10px 14px; border: none; border-radius: 6px; background: #0d6efd; color: white; cursor: pointer;"
       >
-         Minhas Inscrições
+        Minhas Inscrições
       </button>
 
       <button
@@ -195,118 +195,29 @@
   </div>
 
   <div *ngIf="!carregando && eventos.length > 0" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
-    <div
-      *ngFor="let evento of eventos; trackBy: trackByEventoId"
-      style="background: white; border-radius: 10px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); border: 1px solid #e5e5e5;"
-    >
-      <span style="display: inline-block; padding: 5px 10px; background: #e7f1ff; color: #0d6efd; border-radius: 20px; font-size: 13px; margin-bottom: 10px;">
-        {{ evento.categoria }}
-      </span>
+    <ng-container *ngFor="let evento of eventos; trackBy: trackByEventoId">
 
-      <h2 style="margin: 8px 0;">
-        {{ evento.titulo }}
-      </h2>
+      <app-evento-participante-card
+        *ngIf="!ehOrganizador"
+        [evento]="evento"
+        [inscrito]="estaInscrito(evento)"
+        [status]="statusEvento(evento)"
+        [vagasDisponiveis]="vagasDisponiveis(evento)"
+        (inscreverClick)="inscrever($event)"
+        (cancelarClick)="cancelarInscricao($event)"
+      ></app-evento-participante-card>
 
-      <p style="color: #444;">
-        {{ evento.descricao }}
-      </p>
+      <app-evento-organizador-card
+        *ngIf="ehOrganizador"
+        [evento]="evento"
+        [status]="statusEvento(evento)"
+        [vagasDisponiveis]="vagasDisponiveis(evento)"
+        [inscritos]="inscritosPorEvento[evento._id || ''] || null"
+        (editarClick)="editarEvento($event)"
+        (excluirClick)="excluirEvento($event)"
+        (verInscritosClick)="verInscritos($event)"
+      ></app-evento-organizador-card>
 
-      <p>
-        <strong>Data:</strong>
-        {{ evento.dataHora | date:'dd/MM/yyyy HH:mm' }}
-      </p>
-
-      <p>
-        <strong>Local:</strong>
-        {{ evento.local }}
-      </p>
-
-      <p>
-        <strong>Status:</strong>
-        {{ statusEvento(evento) }}
-      </p>
-
-      <p>
-        <strong>Vagas:</strong>
-        {{ vagasDisponiveis(evento) }} disponíveis de {{ evento.vagas }}
-      </p>
-
-      <p>
-        <strong>Organizador:</strong>
-        {{ evento.organizador }}
-      </p>
-
-      <div *ngIf="ehOrganizador" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;">
-        <button
-          type="button"
-          (click)="editarEvento(evento)"
-          [disabled]="eventoFinalizado(evento)"
-          style="padding: 9px 12px; border: none; border-radius: 6px; background: #0d6efd; color: white; cursor: pointer;"
-        >
-          Editar
-        </button>
-
-        <button
-          type="button"
-          (click)="excluirEvento(evento)"
-          [disabled]="eventoFinalizado(evento)"
-          style="padding: 9px 12px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer;"
-        >
-          Excluir
-        </button>
-
-        <button
-          type="button"
-          (click)="verInscritos(evento)"
-          style="padding: 9px 12px; border: none; border-radius: 6px; background: #6c757d; color: white; cursor: pointer;"
-        >
-          Ver Inscritos
-        </button>
-      </div>
-
-      <p *ngIf="ehOrganizador && eventoFinalizado(evento)" style="color: #777; font-size: 13px;">
-        Evento finalizado não pode ser editado ou excluído.
-      </p>
-
-      <div
-        *ngIf="ehOrganizador && inscritosPorEvento[evento._id || '']"
-        style="margin-top: 12px; padding: 12px; background: #f8f9fa; border-radius: 6px;"
-      >
-        <strong>Inscritos:</strong>
-
-        <p *ngIf="inscritosPorEvento[evento._id || ''].length === 0">
-          Nenhum inscrito.
-        </p>
-
-        <ul *ngIf="inscritosPorEvento[evento._id || ''].length > 0">
-          <li *ngFor="let inscrito of inscritosPorEvento[evento._id || '']">
-            {{ inscrito }}
-          </li>
-        </ul>
-      </div>
-
-      <div *ngIf="!ehOrganizador" style="margin-top: 14px;">
-        <button
-          *ngIf="estaInscrito(evento)"
-          type="button"
-          (click)="cancelarInscricao(evento)"
-          style="padding: 10px 14px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer;"
-        >
-          Cancelar Inscrição
-        </button>
-
-        <button
-          *ngIf="!estaInscrito(evento)"
-          type="button"
-          (click)="inscrever(evento)"
-          [disabled]="vagasDisponiveis(evento) === 0 || eventoFinalizado(evento)"
-          style="padding: 10px 14px; border: none; border-radius: 6px; background: #198754; color: white; cursor: pointer;"
-        >
-          <span *ngIf="eventoFinalizado(evento)">Evento finalizado</span>
-          <span *ngIf="!eventoFinalizado(evento) && vagasDisponiveis(evento) === 0">Sem vagas</span>
-          <span *ngIf="!eventoFinalizado(evento) && vagasDisponiveis(evento) > 0">Inscrever-se</span>
-        </button>
-      </div>
-    </div>
+    </ng-container>
   </div>
 </div>
